@@ -19,7 +19,7 @@ services:
     privileged: true
 
   dhcp: # 67/udp
-    image: rackhd/isc-dhcp-server
+    image: emccode/isc-dhcp-server:latest
     build: "./dhcp"
     network_mode: "host"
     privileged: true
@@ -30,7 +30,7 @@ services:
 
   files:
     build: "./files"
-    image: "rackhd/files"
+    image: emccode/files:latest
     network_mode: "host"
     privileged: true
     volumes:
@@ -38,10 +38,10 @@ services:
 
   # RackHD services
 
-  # core:
-  #   build: "../on-core"
-  #   image: rackhd/on-core:latest
-  #   command: "/bin/echo exit"
+  #core:
+  #  build: "../on-core"
+  #  image: emccode/on-core:latest
+  #  command: "/bin/echo exit"
 
   dhcp-proxy: # 68/udp, 4011
     build: "../on-dhcp-proxy"
@@ -51,7 +51,7 @@ services:
       - mongo
       - rabbitmq
       - statsd
-    image: rackhd/on-dhcp-proxy:latest
+    image: emccode/on-dhcp-proxy:latest
     network_mode: "host"
     privileged: true
     volumes:
@@ -65,7 +65,7 @@ services:
       - mongo
       - rabbitmq
       - statsd
-    image: rackhd/on-http:latest
+    image: emccode/on-http:latest
     network_mode: "host"
     privileged: true
     volumes:
@@ -79,7 +79,7 @@ services:
       - logstash
       - mongo
       - rabbitmq
-    image: rackhd/on-statsd:latest
+    image: emccode/on-statsd:latest
     network_mode: "host"
     privileged: true
     volumes:
@@ -92,7 +92,7 @@ services:
       - logstash
       - rabbitmq
       - statsd
-    image: rackhd/on-syslog:latest
+    image: emccode/on-syslog:latest
     network_mode: "host"
     privileged: true
     volumes:
@@ -107,7 +107,7 @@ services:
       - rabbitmq
       - syslog
       - statsd
-    image: rackhd/on-taskgraph:latest
+    image: emccode/on-taskgraph:latest
     network_mode: "host"
     privileged: true
     volumes:
@@ -123,7 +123,7 @@ services:
       - rabbitmq
       - statsd
       - syslog
-    image: rackhd/on-tftp:latest
+    image: emccode/on-tftp:latest
     network_mode: "host"
     privileged: true
     volumes:
