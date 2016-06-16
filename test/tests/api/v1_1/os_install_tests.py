@@ -16,9 +16,9 @@ from proboscis import test
 from proboscis import after_class
 from proboscis import before_class
 from json import dumps, loads
-import os
 
 LOG = Log(__name__)
+DEFAULT_TIMEOUT = 5400
 
 @test(groups=['os-install.v1.1.tests'], \
     depends_on_groups=['amqp.tests'])
@@ -26,10 +26,11 @@ class OSInstallTests(object):
 
     def __init__(self):
         self.__client = config.api_client
-        self.__base = os.getenv('RACKHD_BASE_REPO_URL', \
+        self.__base = defaults.get('RACKHD_BASE_REPO_URL', \
             'http://{0}:{1}'.format(HOST_IP, HOST_PORT))
         self.__obm_options = { 
-            'obmServiceName': os.getenv('RACKHD_GLOBAL_OBM_SERVICE_NAME', 'ipmi-obm-service') 
+            'obmServiceName': defaults.get('RACKHD_GLOBAL_OBM_SERVICE_NAME', \
+                'ipmi-obm-service')
         }
             
     @before_class()
@@ -44,7 +45,7 @@ class OSInstallTests(object):
         return loads(self.__client.last_response.data)
     
     def __post_workflow(self, graph_name, nodes, body):
-        workflows().post_workflows(graph_name, timeout_sec=3600, nodes=nodes, data=body)         
+        workflows().post_workflows(graph_name, timeout_sec=DEFAULT_TIMEOUT, nodes=nodes, data=body)         
 
     def __format_drives(self):
         # Clear disk MBR and partitions
@@ -71,26 +72,32 @@ class OSInstallTests(object):
         
     def install_centos(self, version, nodes=[], options=None):
         graph_name = 'Graph.InstallCentOS'
-        os_repo = os.getenv('RACKHD_CENTOS_REPO_PATH', \
+        os_repo = defaults.get('RACKHD_CENTOS_REPO_PATH', \
             self.__base + '/repo/centos/{0}'.format(version))
         body = options
         if body == None:
             body = {
                 'options': {
                     'defaults': {
+                        'installDisk': '/dev/sda',
                         'kvm': 'undefined', 
-                        'version':version,
+                        'version': version,
                         'repo': os_repo
                     },
                     'set-boot-pxe': self.__obm_options,
-                    'reboot': self.__obm_options
+                    'reboot': self.__obm_options,
+                    'install-os': {
+                        'schedulerOverrides': {
+                            'timeout': 3600000
+                        }
+                    }
                 }
             } 
         self.__post_workflow(graph_name, nodes, body)
         
     def install_esxi(self, version, nodes=[], options=None):
         graph_name = 'Graph.InstallEsx'
-        os_repo = os.getenv('RACKHD_ESXI_REPO_PATH', \
+        os_repo = defaults.get('RACKHD_ESXI_REPO_PATH', \
             self.__base + '/repo/esxi/{0}'.format(version))
         body = options
         if body == None:
@@ -102,45 +109,62 @@ class OSInstallTests(object):
                         'repo': os_repo
                     },
                     'set-boot-pxe': self.__obm_options,
-                    'reboot': self.__obm_options
+                    'reboot': self.__obm_options,
+                    'install-os': {
+                        'schedulerOverrides': {
+                            'timeout': 3600000
+                        }
+                    }
                 }
             }
         self.__post_workflow(graph_name, nodes, body)  
         
     def install_suse(self, version, nodes=[], options=None):
         graph_name = 'Graph.InstallSUSE'
-        os_repo = os.getenv('RACKHD_SUSE_REPO_PATH', \
+        os_repo = defaults.get('RACKHD_SUSE_REPO_PATH', \
             self.__base + '/repo/suse/{0}/'.format(version))
         body = options
         if body == None:
             body = {
                 'options': {
                     'defaults': {
+                        'installDisk': '/dev/sda',
                         'kvm': 'undefined', 
-                        'version':version,
+                        'version': version,
                         'repo': os_repo
                     },
                     'set-boot-pxe': self.__obm_options,
-                    'reboot': self.__obm_options
+                    'reboot': self.__obm_options,
+                    'install-os': {
+                        'schedulerOverrides': {
+                            'timeout': 3600000
+                        }
+                    }
                 }
             }
         self.__post_workflow(graph_name, nodes, body)
         
     def install_ubuntu(self, version, nodes=[], options=None):
         graph_name = 'Graph.InstallUbuntu'
-        os_repo = os.getenv('RACKHD_UBUNTU_REPO_PATH', \
+        os_repo = defaults.get('RACKHD_UBUNTU_REPO_PATH', \
             self.__base + '/repo/ubuntu')
         body = options
         if body == None:
             body = {
                 'options': {
                     'defaults': {
+                        'installDisk': '/dev/sda',
                         'kvm': 'undefined', 
-                        'version':version,
+                        'version': version,
                         'repo': os_repo
                     },
                     'set-boot-pxe': self.__obm_options,
-                    'reboot': self.__obm_options
+                    'reboot': self.__obm_options,
+                    'install-ubuntu': {
+                        'schedulerOverrides': {
+                            'timeout': 3600000
+                        }
+                    }
                 }
             }
         self.__post_workflow(graph_name, nodes, body)
