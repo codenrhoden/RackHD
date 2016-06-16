@@ -1,0 +1,23 @@
+{
+    "friendlyName": "Rancher Standby",
+    "injectableName": "Graph.DefaultRancherNode.Standby",
+    "tasks": [
+        {
+            "label": "create-noop-obm-settings",
+            "taskDefinition": {
+                "friendlyName": "Create VirtualBox OBM settings",
+                "injectableName": "Task.Obm.Vbox.CreateSettings",
+                "implementsTask": "Task.Base.Obm.CreateSettings",
+                "options": {
+                    "service": "noop-obm-service",
+                    "config": {}
+                },
+                "properties": {
+                    "obm": {
+                        "type": "virtualbox"
+                    }
+                }
+            }
+        }
+    ]
+}

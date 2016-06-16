@@ -1,0 +1,10 @@
+{
+    "name": "Small RAM node",
+    "discoveryGraphName": "Graph.DefaultRancherNode.Standby",
+    "rules": [
+        {
+            "path": "total-memory-mb.memoryMb",
+            "lessThan": 4096
+        }
+    ]
+}
