@@ -30,7 +30,7 @@ services:
 
   files:
     build: "./files"
-    image: emccode/files:latest
+    image: emccode/rackhd-files:latest
     network_mode: "host"
     privileged: true
     volumes:
@@ -129,6 +129,13 @@ services:
     volumes:
       - "./files/mount:/RackHD/on-tftp/static/tftp"
       - "./monorail:/opt/monorail"
+
+  customize:
+    build: "./customize"
+    depends_on:
+      - http
+    image: emccode/rackhd-customize:latest
+    network_mode: "host"
 
   # ELK services
 
