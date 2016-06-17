@@ -1,0 +1,22 @@
+# Copyright 2016, EMC, Inc.
+
+FROM emccode/on-core
+
+COPY on-tasks /RackHD/on-tasks/
+WORKDIR /RackHD/on-tasks
+
+RUN npm install --ignore-scripts --production
+
+COPY on-taskgraph /RackHD/on-taskgraph/
+WORKDIR /RackHD/on-taskgraph
+
+RUN mkdir -p ./node_modules \
+  && ln -s /RackHD/on-core ./node_modules/on-core \
+  && ln -s /RackHD/on-core/node_modules/di ./node_modules/di \
+  && ln -s /RackHD/on-tasks ./node_modules/on-tasks \
+  && npm install --ignore-scripts --production \
+  && echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+  && apk add --update ipmitool@testing net-snmp net-snmp-libs net-snmp-tools
+
+VOLUME /var/lib/dhcp
+CMD [ "node", "/RackHD/on-taskgraph/index.js" ]

@@ -1,0 +1,26 @@
+# Copyright 2016, EMC, Inc.
+
+FROM emccode/on-core
+
+COPY on-tasks /RackHD/on-tasks/
+WORKDIR /RackHD/on-tasks
+
+RUN npm install --ignore-scripts --production
+
+COPY on-http /RackHD/on-http/
+WORKDIR /RackHD/on-http
+
+RUN mkdir -p ./node_modules \
+  && ln -s /RackHD/on-core ./node_modules/on-core \
+  && ln -s /RackHD/on-core/node_modules/di ./node_modules/di \
+  && ln -s /RackHD/on-tasks ./node_modules/on-tasks \
+  && npm install --ignore-scripts --production \
+  && npm install apidoc && npm run apidoc \
+  && echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+  && apk add --update ipmitool@testing unzip \
+  && /RackHD/on-http/install-web-ui.sh \
+  && /RackHD/on-http/install-swagger-ui.sh
+
+EXPOSE 9080 9090
+VOLUME /RackHD/on-http/static/http/common
+CMD [ "node", "/RackHD/on-http/index.js" ]
