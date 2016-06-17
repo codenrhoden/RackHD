@@ -26,11 +26,6 @@ curl -X POST -H "Content-Type: application/json" \
      http://127.0.0.1:9090/api/1.1/skus
 fi
 
-# Add our custom memory catalog
-curl -X PUT -H "Content-Type: application/json" \
-     --data @/memory_catalog.json \
-     http://127.0.0.1:9090/api/1.1/workflows/tasks
-
 # Add our default Workflow for the SKUs
 curl -X PUT -H "Content-Type: application/json" \
      --data @/rancher_standby.json \
