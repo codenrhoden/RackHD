@@ -1,23 +1,23 @@
 {
     "friendlyName": "Rancher Standby",
     "injectableName": "Graph.DefaultRancherNode.Standby",
+    "options": {
+        "defaults": {
+	    "user": "ADMIN",
+            "password": "ADMIN"
+        }
+    },
     "tasks": [
         {
-            "label": "create-noop-obm-settings",
-            "taskDefinition": {
-                "friendlyName": "Create VirtualBox OBM settings",
-                "injectableName": "Task.Obm.Vbox.CreateSettings",
-                "implementsTask": "Task.Base.Obm.CreateSettings",
-                "options": {
-                    "service": "noop-obm-service",
-                    "config": {}
-                },
-                "properties": {
-                    "obm": {
-                        "type": "virtualbox"
-                    }
-                }
-            }
+            "label": "Create default IPMI settings",
+            "taskName": "Task.Obm.Ipmi.CreateSettings"
+	},
+        {
+            "label": "Power Off Node",
+            "taskName": "Task.Obm.Node.PowerOff",
+            "waitOn": {
+                "Create default IPMI settings": "succeeded"
+	    }
         }
     ]
 }
