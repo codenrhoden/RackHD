@@ -1,5 +1,5 @@
 {
-    "name": "Large RAM node",
+    "name": "RancherLargeNode",
     "discoveryGraphName": "Graph.DefaultRancherNode.Standby",
     "rules": [
         {
